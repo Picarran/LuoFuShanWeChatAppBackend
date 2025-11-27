@@ -6,10 +6,7 @@ import com.example.luofushan.dto.req.ResourcePageReq;
 import com.example.luofushan.dto.resp.ResourcePageResp;
 import com.example.luofushan.service.ResourceService;
 import jakarta.annotation.Resource;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/resource")
@@ -17,8 +14,10 @@ public class ResourceController {
     @Resource
     private ResourceService resourceService;
 
-    @GetMapping("/content/{id}")
-    public Result<String> getContentById(@PathVariable("id") Long id) {
+    @GetMapping("/content")
+    public Result<String> getContentById(@RequestParam("id") Long id) {
+
+        //TODO: 空值判断
         return Result.buildSuccess(resourceService.getContent(id));
     }
 
