@@ -1,4 +1,4 @@
-package com.example.luofushan.dao;
+package com.example.luofushan.dao.entity;
 
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;

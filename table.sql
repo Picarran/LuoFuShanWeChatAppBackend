@@ -1,7 +1,22 @@
 -- =====================================
 -- 用户表 user
 -- =====================================
+
+DROP TABLE IF EXISTS post_comment;
+
+DROP TABLE IF EXISTS user_post;
+
+DROP TABLE IF EXISTS user_checkin;
+
+DROP TABLE IF EXISTS checkin_location;
+
+DROP TABLE IF EXISTS user_token;
+
+DROP TABLE IF EXISTS resource;
+
 DROP TABLE IF EXISTS user;
+
+
 
 CREATE TABLE user (
     id BIGINT AUTO_INCREMENT PRIMARY KEY COMMENT '用户ID',
@@ -19,7 +34,6 @@ CREATE TABLE user (
 -- =====================================
 -- 用户登录 token 表 user_token
 -- =====================================
-DROP TABLE IF EXISTS user_token;
 
 CREATE TABLE user_token (
     id BIGINT AUTO_INCREMENT PRIMARY KEY COMMENT '自增主键',
@@ -37,7 +51,6 @@ CREATE TABLE user_token (
 -- =====================================
 -- Resource 表
 -- =====================================
-DROP TABLE IF EXISTS resource;
 
 CREATE TABLE resource (
     id BIGINT AUTO_INCREMENT PRIMARY KEY COMMENT '主键，资源唯一标识',
@@ -56,7 +69,6 @@ CREATE TABLE resource (
 -- =====================================
 -- 打卡点表 checkin_location
 -- =====================================
-DROP TABLE IF EXISTS checkin_location;
 
 CREATE TABLE checkin_location (
     id BIGINT AUTO_INCREMENT PRIMARY KEY COMMENT '景点ID',
@@ -64,6 +76,7 @@ CREATE TABLE checkin_location (
     latitude DOUBLE NULL COMMENT '纬度',
     longitude DOUBLE NULL COMMENT '经度',
     score INT NOT NULL COMMENT '单次打卡奖励积分',
+    today_has_checkin BIGINT NOT NULL COMMENT '今日总打卡数',
     cover_img VARCHAR(255) NULL COMMENT '封面图',
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
@@ -73,7 +86,6 @@ CREATE TABLE checkin_location (
 -- =====================================
 -- 用户打卡记录 user_checkin
 -- =====================================
-DROP TABLE IF EXISTS user_checkin;
 
 CREATE TABLE user_checkin (
     id BIGINT AUTO_INCREMENT PRIMARY KEY COMMENT '记录ID',
@@ -93,7 +105,6 @@ CREATE TABLE user_checkin (
 -- =====================================
 -- 用户动态 user_post
 -- =====================================
-DROP TABLE IF EXISTS user_post;
 
 CREATE TABLE user_post (
     id BIGINT AUTO_INCREMENT PRIMARY KEY COMMENT '动态ID',
@@ -115,7 +126,6 @@ CREATE TABLE user_post (
 -- =====================================
 -- 用户评论 post_comment
 -- =====================================
-DROP TABLE IF EXISTS post_comment;
 
 CREATE TABLE post_comment (
     id BIGINT AUTO_INCREMENT PRIMARY KEY COMMENT '评论ID',
