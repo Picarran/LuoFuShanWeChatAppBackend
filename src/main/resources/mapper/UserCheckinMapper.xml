@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.luofushan.dao.mapper.UserCheckinMapper">
+
+    <!-- 查询用户打卡历史（分页） -->
+    <select id="selectHistoryByUserId" resultType="com.example.luofushan.dto.resp.UserCheckinHistoryResp">
+        SELECT
+        uc.location_id AS locationId,
+        cl.name AS locationName,
+        uc.checkin_time AS checkinTime,
+        cl.score
+        FROM user_checkin uc
+        JOIN checkin_location cl ON uc.location_id = cl.id
+        WHERE uc.user_id = #{userId}
+        AND uc.delflag = 0
+        ORDER BY uc.checkin_time DESC
+        LIMIT #{offset}, #{size}
+    </select>
+
+    <!-- 查询用户打卡总数 -->
+    <select id="countByUserId" resultType="int">
+        SELECT COUNT(*)
+        FROM user_checkin
+        WHERE user_id = #{userId}
+        AND delflag = 0
+    </select>
+
+</mapper>

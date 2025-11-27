@@ -140,3 +140,52 @@ CREATE TABLE post_comment (
     INDEX idx_comment_post (post_id),
     INDEX idx_comment_user (user_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+-- 插入测试用户
+INSERT INTO user (open_id, nickname, avatar_url, points, weekly_checkin_count)
+VALUES
+('wx_openid_1', '用户1', 'https://example.com/avatar1.jpg', 100, 2),
+('wx_openid_2', '用户2', 'https://example.com/avatar2.jpg', 150, 1),
+('wx_openid_3', '用户3', 'https://example.com/avatar3.jpg', 80, 3);
+
+-- 插入打卡点
+INSERT INTO resource (type, name, cover_img, latitude, longitude, hot_score, content_json)
+VALUES
+('景点', '九寨沟', 'https://example.com/images/jiuzhaigou.jpg', 33.2529, 103.9186, 95,
+ '[{"type":"text","content":"九寨沟位于四川省阿坝藏族羌族自治州，以湖泊和瀑布闻名。"}]'),
+
+('住宿', '成都锦江宾馆', 'https://example.com/images/jinjiang_hotel.jpg', 30.6586, 104.0648, 80,
+ '[{"type":"text","content":"成都锦江宾馆提供舒适的住宿环境，方便游客出行。"}]'),
+
+('餐饮', '成都火锅店', 'https://example.com/images/hotpot.jpg', 30.6628, 104.0719, 75,
+ '[{"type":"text","content":"正宗成都火锅，辣而不燥，食材新鲜。"}]'),
+
+('商家', '成都茶叶店', 'https://example.com/images/tea_shop.jpg', 30.6550, 104.0665, 60,
+ '[{"type":"text","content":"提供各类优质茶叶和茶具，适合茶文化爱好者。"}]'),
+
+('景点', '乐山大佛', 'https://example.com/images/leshan_buddha.jpg', 29.5585, 103.7655, 90,
+ '[{"type":"text","content":"乐山大佛是世界上最大的石刻坐佛，景区历史悠久。"}]');
+
+
+-- 插入打卡记录
+-- 用户1打卡记录
+INSERT INTO user_checkin (user_id, location_id, checkin_time)
+VALUES
+(1, 1, '2025-11-27 10:00:00'),
+(1, 2, '2025-11-26 15:30:00'),
+(1, 3, '2025-11-25 12:00:00');
+
+-- 用户2打卡记录
+INSERT INTO user_checkin (user_id, location_id, checkin_time)
+VALUES
+(2, 1, '2025-11-27 09:30:00'),
+(2, 5, '2025-11-26 11:00:00'),
+(2, 6, '2025-11-25 14:00:00');
+
+-- 用户3打卡记录
+INSERT INTO user_checkin (user_id, location_id, checkin_time)
+VALUES
+(3, 4, '2025-11-27 08:00:00'),
+(3, 7, '2025-11-26 17:20:00'),
+(3, 3, '2025-11-25 19:45:00');
