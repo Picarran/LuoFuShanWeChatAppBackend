@@ -3,14 +3,19 @@ package com.example.luofushan.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.luofushan.dao.entity.CheckinLocation;
+import com.example.luofushan.dao.entity.UserCheckin;
 import com.example.luofushan.dao.mapper.CheckinLocationMapper;
 import com.example.luofushan.dao.mapper.UserCheckinMapper;
 import com.example.luofushan.dto.req.UserCheckinHistoryReq;
+import com.example.luofushan.dto.req.UserCheckinReq;
 import com.example.luofushan.dto.resp.CheckinLocationListResp;
 import com.example.luofushan.dto.resp.UserCheckinHistoryResp;
+import com.example.luofushan.dto.resp.UserCheckinResp;
 import com.example.luofushan.service.CheckinService;
 import jakarta.annotation.Resource;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -54,5 +59,47 @@ public class CheckinServiceImpl implements CheckinService {
         page.setPages((total + req.getSize() - 1) / req.getSize());
 
         return page;
+    }
+
+    @Override
+    @Transactional
+    public UserCheckinResp doUserCheckin(UserCheckinReq req) {
+
+        // 1. 校验景点是否存在
+        CheckinLocation loc = checkinLocationMapper.selectById(req.getLocationId());
+        if (loc == null) {
+            throw new RuntimeException("景点不存在");
+        }
+
+        // TODO:1.2:校验用户是否存在
+
+        // 2. 插入打卡记录（利用 UNIQUE KEY 防重复）
+        UserCheckin uc = UserCheckin.builder()
+                .userId(req.getUserId())
+                .locationId(req.getLocationId())
+                .checkinTime(req.getCheckinTime())
+                .build();
+
+        try {
+            userCheckinMapper.insert(uc);
+        } catch (DuplicateKeyException e) {
+            throw new RuntimeException("该景点已打卡");
+        }
+
+        // 3. 景点今日打卡数 + 1
+        checkinLocationMapper.incrementTodayCount(req.getLocationId());
+
+        // 4. 获取更新后的今日打卡数
+        Long todayCount = checkinLocationMapper.selectTodayCount(req.getLocationId());
+
+        // 5. 构造返回对象
+        return UserCheckinResp.builder()
+                .checkinId(uc.getId())
+                .locationId(loc.getId())
+                .locationName(loc.getName())
+                .checkinTime(req.getCheckinTime())
+                .score(loc.getScore())
+                .todayHasCheckin(todayCount)
+                .build();
     }
 }
