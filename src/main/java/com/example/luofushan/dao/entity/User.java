@@ -20,5 +20,8 @@ public class User extends BaseDO {
     @TableField("avatar_url")
     private String avatarUrl;
 
-    private Integer score; // 积分，默认0
+    private Integer points; // 积分，默认0
+
+    @TableField("weekly_checkin_count")
+    private Integer weeklyCheckinCount;
 }

@@ -10,10 +10,11 @@ import com.example.luofushan.dao.mapper.UserTokenMapper;
 import com.example.luofushan.dto.resp.WeChatSessionResp;
 import com.example.luofushan.service.AuthService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -40,9 +41,15 @@ public class AuthServiceImpl implements AuthService {
                 "https://api.weixin.qq.com/sns/jscode2session?appid=%s&secret=%s&js_code=%s&grant_type=authorization_code",
                 weChatProps.getAppid(), weChatProps.getSecret(), codeId
         );
-        WeChatSessionResp wx = restTemplate.getForObject(url, WeChatSessionResp.class);
-        if (wx == null) {
-            throw new RuntimeException("微信接口异常");
+        String body = restTemplate.getForObject(url, String.class);
+        if (!StringUtils.hasText(body)) {
+            throw new RuntimeException("微信接口返回空");
+        }
+        WeChatSessionResp wx;
+        try {
+            wx = new ObjectMapper().readValue(body, WeChatSessionResp.class);
+        } catch (com.fasterxml.jackson.core.JsonProcessingException e) {
+            throw new RuntimeException("解析微信返回失败", e);
         }
         if (wx.getErrcode() != null && wx.getErrcode() != 0) {
             throw new RuntimeException("微信登录失败: " + wx.getErrmsg());
@@ -58,7 +65,7 @@ public class AuthServiceImpl implements AuthService {
             user.setOpenId(openId);
             user.setNickname("游客");
             user.setAvatarUrl(null);
-            user.setScore(0);
+            user.setPoints(0);
             userMapper.insert(user);
         }
 
