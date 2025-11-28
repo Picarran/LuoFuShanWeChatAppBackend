@@ -6,7 +6,9 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.luofushan.common.exception.LuoFuShanException;
 import com.example.luofushan.dao.entity.Resource;
 import com.example.luofushan.dao.mapper.ResourceMapper;
+import com.example.luofushan.dto.req.NearbyResourceReq;
 import com.example.luofushan.dto.req.ResourcePageReq;
+import com.example.luofushan.dto.resp.NearbyResourceResp;
 import com.example.luofushan.dto.resp.ResourcePageResp;
 import com.example.luofushan.service.ResourceService;
 import io.netty.util.internal.StringUtil;
@@ -67,6 +69,21 @@ public class ResourceServiceImpl extends ServiceImpl<ResourceMapper, Resource> i
         voPage.setRecords(voList);
 
         return voPage;
+    }
+
+    @Override
+    public Page<NearbyResourceResp> listNearbyResources(NearbyResourceReq req) {
+        req.initDefault();
+        int offset = (req.getPage() - 1) * req.getSize();
+
+        List<NearbyResourceResp> records = baseMapper.selectNearbyResources(req.getType(), req.getLatitude(), req.getLongitude(), offset, req.getSize(), req.getSortBy());
+        int total = baseMapper.countNearbyResources(req.getType());
+
+        Page<NearbyResourceResp> result = new Page<>(req.getPage(), req.getSize(), total);
+        result.setRecords(records);
+        result.setPages((total + req.getSize() - 1) / req.getSize());
+
+        return result;
     }
 
 }

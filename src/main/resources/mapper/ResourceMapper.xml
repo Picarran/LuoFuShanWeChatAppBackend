@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.luofushan.dao.mapper.ResourceMapper">
+
+    <!-- 查询附近资源 -->
+    <select id="selectNearbyResources" resultType="com.example.luofushan.dto.resp.NearbyResourceResp">
+        SELECT
+        r.id,
+        r.name AS title,
+        IF(
+        #{latitude} IS NOT NULL AND #{longitude} IS NOT NULL,
+        ST_Distance_Sphere(
+        POINT(r.longitude, r.latitude),
+        POINT(#{longitude}, #{latitude})
+        ),
+        NULL
+        ) AS distance,
+        r.hot_score AS hotScore,
+        r.cover_img AS coverImg,
+        r.created_at AS createdAt
+        FROM resource r
+        WHERE r.delflag = 0
+        AND r.type = #{type}
+        <choose>
+            <when test="sortBy == 'distance'">
+                ORDER BY distance ASC
+            </when>
+            <when test="sortBy == 'hot'">
+                ORDER BY r.hot_score DESC
+            </when>
+            <otherwise>
+                ORDER BY distance ASC
+            </otherwise>
+        </choose>
+        LIMIT #{offset}, #{size}
+    </select>
+
+    <!-- 查询总数 -->
+    <select id="countNearbyResources" resultType="int">
+        SELECT COUNT(*)
+        FROM resource r
+        WHERE r.delflag = 0
+        AND r.type = #{type}
+    </select>
+
+</mapper>
