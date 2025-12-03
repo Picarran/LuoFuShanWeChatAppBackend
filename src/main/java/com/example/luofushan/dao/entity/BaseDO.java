@@ -22,7 +22,7 @@ public class BaseDO {
      * 修改时间
      * 在执行 INSERT UPDATE 操作时，自动给该字段赋值
      */
-    @TableField(fill = FieldFill.INSERT_UPDATE)
+    @TableField(value = "updated_at",fill = FieldFill.INSERT_UPDATE)
     private LocalDateTime updatedAt;
     
 
