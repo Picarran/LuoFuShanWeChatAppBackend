@@ -1,19 +1,17 @@
 package com.example.luofushan.service.impl;
-
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.example.luofushan.config.WeChatProperties;
 import com.example.luofushan.config.AuthProperties;
 import com.example.luofushan.dao.entity.User;
 import com.example.luofushan.dao.entity.UserToken;
 import com.example.luofushan.dao.mapper.UserMapper;
 import com.example.luofushan.dao.mapper.UserTokenMapper;
+import com.example.luofushan.dto.resp.LoginResp;
 import com.example.luofushan.dto.resp.WeChatSessionResp;
 import com.example.luofushan.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.time.Instant;
@@ -25,21 +23,24 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
 
-    private final WeChatProperties weChatProps;
-    private final AuthProperties authProps;   
+    private final AuthProperties authProps;
     private final RestTemplate restTemplate;
     private final UserMapper userMapper;
     private final UserTokenMapper userTokenMapper;
 
     @Override
-    public String loginByWeChatCode(String codeId) {
+    public LoginResp login(String codeId, String appId, String secret) {
         if (!StringUtils.hasText(codeId)) {
             throw new IllegalArgumentException("codeId不能为空");
         }
-        // 调用微信 jscode2session
+        if (!StringUtils.hasText(appId) || !StringUtils.hasText(secret)) {
+            throw new IllegalArgumentException("appId/secret不能为空");
+        }
+
+        // 前端传入的 appId/secret，调用 jscode2session
         String url = String.format(
                 "https://api.weixin.qq.com/sns/jscode2session?appid=%s&secret=%s&js_code=%s&grant_type=authorization_code",
-                weChatProps.getAppid(), weChatProps.getSecret(), codeId
+                appId, secret, codeId
         );
         String body = restTemplate.getForObject(url, String.class);
         if (!StringUtils.hasText(body)) {
@@ -66,12 +67,12 @@ public class AuthServiceImpl implements AuthService {
             user.setNickname("游客");
             user.setAvatarUrl(null);
             user.setPoints(0);
+            user.setWeeklyCheckinCount(0);
             userMapper.insert(user);
         }
 
         String token = UUID.randomUUID().toString().replace("-", "");
         Date expireAt = Date.from(Instant.now().plus(authProps.getTokenTtlDays(), ChronoUnit.DAYS));
-
         userTokenMapper.delete(new LambdaQueryWrapper<UserToken>().eq(UserToken::getUserId, user.getId()));
 
         UserToken ut = new UserToken();
@@ -80,6 +81,6 @@ public class AuthServiceImpl implements AuthService {
         ut.setExpireAt(expireAt);
         userTokenMapper.insert(ut);
 
-        return token;
+        return new LoginResp(token, user.getId(), user.getNickname(), user.getAvatarUrl(), user.getPoints(), user.getWeeklyCheckinCount());
     }
 }

@@ -1,5 +1,7 @@
 package com.example.luofushan.service;
 
+import com.example.luofushan.dto.resp.LoginResp;
+
 public interface AuthService {
-    String loginByWeChatCode(String codeId);
+    LoginResp login(String codeId, String appId, String secret);
 }

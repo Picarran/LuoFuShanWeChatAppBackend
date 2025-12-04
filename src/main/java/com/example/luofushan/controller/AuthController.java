@@ -15,7 +15,8 @@ public class AuthController {
 
     @PostMapping("/auth/login")
     public Result<LoginResp> login(@RequestBody LoginReq req) {
-        String token = authService.loginByWeChatCode(req.getCodeId());
-        return Result.buildSuccess(new LoginResp(token));
+        LoginResp resp = authService.login(req.getCodeId(), req.getAppId(), req.getSecret());
+        return Result.buildSuccess(resp);
     }
 }
+
