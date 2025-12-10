@@ -9,7 +9,6 @@ import java.time.LocalDateTime;
 @Data
 public class UserCheckinReq {
 
-    private Long userId;
     private Long locationId;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")

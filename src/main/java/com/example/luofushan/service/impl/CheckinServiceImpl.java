@@ -12,6 +12,7 @@ import com.example.luofushan.dto.req.UserCheckinReq;
 import com.example.luofushan.dto.resp.CheckinLocationListResp;
 import com.example.luofushan.dto.resp.UserCheckinHistoryResp;
 import com.example.luofushan.dto.resp.UserCheckinResp;
+import com.example.luofushan.security.UserContext;
 import com.example.luofushan.service.CheckinService;
 import jakarta.annotation.Resource;
 import org.springframework.dao.DuplicateKeyException;
@@ -72,11 +73,9 @@ public class CheckinServiceImpl implements CheckinService {
             throw LuoFuShanException.locationNotExists();
         }
 
-        // TODO:1.2:校验用户是否存在
-
         // 2. 插入打卡记录（利用 UNIQUE KEY 防重复）
         UserCheckin uc = UserCheckin.builder()
-                .userId(req.getUserId())
+                .userId(UserContext.getUserId())
                 .locationId(req.getLocationId())
                 .checkinTime(req.getCheckinTime())
                 .build();

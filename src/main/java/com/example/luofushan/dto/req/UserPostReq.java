@@ -10,8 +10,6 @@ import java.util.List;
 @Data
 public class UserPostReq {
 
-    private Long userId;
-
     private Long locationId;
 
     private String content;

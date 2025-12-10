@@ -14,6 +14,7 @@ import com.example.luofushan.dto.req.PostCommentReq;
 import com.example.luofushan.dto.req.PostListReq;
 import com.example.luofushan.dto.req.UserPostReq;
 import com.example.luofushan.dto.resp.*;
+import com.example.luofushan.security.UserContext;
 import com.example.luofushan.service.UserPostService;
 import jakarta.annotation.Resource;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -36,7 +37,7 @@ public class UserPostServiceImpl implements UserPostService {
     public UserPostResp createPost(UserPostReq req) {
 
         UserPost post = UserPost.builder()
-                .userId(req.getUserId())
+                .userId(UserContext.getUserId())
                 .locationId(req.getLocationId())
                 .content(req.getContent())
                 .images(req.getImages())
@@ -95,6 +96,7 @@ public class UserPostServiceImpl implements UserPostService {
     @Override
     public PostCommentResp addComment(PostCommentReq postCommentReq) {
         PostComment comment = BeanUtil.toBean(postCommentReq, PostComment.class);
+        comment.setUserId(UserContext.getUserId());
         try {
             postCommentMapper.insert(comment);
         }catch (DataIntegrityViolationException e) {
