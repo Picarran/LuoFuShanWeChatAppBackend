@@ -89,7 +89,7 @@ CREATE TABLE user_checkin (
     delflag TINYINT(1) NOT NULL DEFAULT 0 COMMENT '逻辑删除标志',
     CONSTRAINT fk_checkin_user FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE,
     CONSTRAINT fk_checkin_location FOREIGN KEY (location_id) REFERENCES checkin_location(id) ON DELETE CASCADE,
-    UNIQUE KEY uniq_user_location (user_id, location_id),
+    UNIQUE KEY uniq_user_location (user_id, location_id, checkin_time),
     INDEX idx_user_checkin_user (user_id),
     INDEX idx_user_checkin_location (location_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
