@@ -16,6 +16,11 @@ jobs:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Set Git identity
+        run: |
+          git config --global user.email "actions@github.com"
+          git config --global user.name "GitHub Actions"
+
       - name: Add upstream
         run: |
           git remote add upstream https://github.com/AliceLinks/LuoFuShanWeChatAppBackend.git
