@@ -2,7 +2,7 @@ name: Sync Fork With Upstream
 
 on:
   schedule:
-    - cron: "*/5 * * * *"   # 每 5 分钟
+    - cron: "*/5 * * * *"
   workflow_dispatch:
 
 jobs:
@@ -29,6 +29,10 @@ jobs:
       - name: Merge upstream
         run: |
           git merge upstream/master --allow-unrelated-histories || true
+
+      - name: Use PAT instead of GITHUB_TOKEN
+        run: |
+          git remote set-url origin https://Picarran:${{ secrets.PAT_FOR_SYNC }}@github.com/Picarran/LuoFuShanWeChatAppBackend.git
 
       - name: Push changes
         run: |
