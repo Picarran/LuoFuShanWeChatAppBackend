@@ -14,26 +14,26 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          github_token: ${{ secrets.PAT_FOR_SYNC }}
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set Git identity
         run: |
           git config --global user.email "actions@github.com"
           git config --global user.name "GitHub Actions"
 
-      - name: Add upstream and fetch
+      - name: Add upstream
         run: |
           git remote add upstream https://github.com/AliceLinks/LuoFuShanWeChatAppBackend.git
           git fetch upstream
 
-      - name: Reset to upstream/master
+      - name: Merge upstream
         run: |
-          git reset --hard upstream/master
+          git merge upstream/master --allow-unrelated-histories || true
 
-      - name: Use PAT for push
+      - name: Use PAT instead of GITHUB_TOKEN
         run: |
           git remote set-url origin https://Picarran:${{ secrets.PAT_FOR_SYNC }}@github.com/Picarran/LuoFuShanWeChatAppBackend.git
 
-      - name: Force push to origin
+      - name: Push changes
         run: |
-          git push --force origin master
+          git push origin HEAD:master
