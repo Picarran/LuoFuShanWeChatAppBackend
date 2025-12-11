@@ -3,3 +3,5 @@
 
 # add cicd
 https://github.com/Picarran/LuoFuShanWeChatAppBackend/actions/workflows/syn.yml
+
+114
