@@ -41,4 +41,8 @@ public class LuoFuShanException extends RuntimeException {
     public static LuoFuShanException pointsNotEnough() {
         return new LuoFuShanException("积分不足，无法兑换");
     }
+
+    public static LuoFuShanException fileUploadFailed(String msg) {
+        return new LuoFuShanException(msg);
+    }
 }
