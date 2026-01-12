@@ -29,4 +29,16 @@ public class LuoFuShanException extends RuntimeException {
     public static LuoFuShanException UserOrPostNotExists() {
         return new LuoFuShanException("用户或动态不存在");
     }
+
+    public static LuoFuShanException invalidStatus() {
+        return new LuoFuShanException("状态参数无效，必须为 redeemed 或 unredeemed");
+    }
+
+    public static LuoFuShanException mallItemNotExists() {
+        return new LuoFuShanException("兑换商品不存在");
+    }
+
+    public static LuoFuShanException pointsNotEnough() {
+        return new LuoFuShanException("积分不足，无法兑换");
+    }
 }

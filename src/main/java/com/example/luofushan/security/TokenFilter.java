@@ -28,6 +28,7 @@ public class TokenFilter implements Filter {
             "/resource/content",
             "/resource/nearby/content",
             "/checkin/location/list",
+            "/mall/item/list", 
             "/v3/api-docs", "/swagger", "/swagger-ui", "/favicon", "/error" 
     );
 

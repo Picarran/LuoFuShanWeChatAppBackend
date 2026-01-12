@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.luofushan.dao.mapper.UserExchangeMapper">
+
+    <select id="selectMyExchangeList" resultType="com.example.luofushan.dto.resp.MyExchangeRecordResp">
+        SELECT
+            ue.id,
+            mi.name AS itemName,
+            ue.is_redeemed AS isRedeemed,
+            ue.place_name AS placeName,
+            ue.code,
+            ue.created_at AS createdAt
+        FROM user_exchange ue
+        LEFT JOIN mall_item mi ON ue.item_id = mi.id
+        WHERE ue.user_id = #{userId}
+          AND ue.delflag = 0
+          AND ue.is_redeemed = #{isRedeemed}
+        ORDER BY ue.created_at DESC
+        LIMIT #{offset}, #{size}
+    </select>
+
+    <select id="countMyExchange" resultType="int">
+        SELECT COUNT(*)
+        FROM user_exchange
+        WHERE user_id = #{userId}
+          AND delflag = 0
+          AND is_redeemed = #{isRedeemed}
+    </select>
+
+</mapper>
