@@ -27,4 +27,4 @@ auth:
 
 file:
   upload-dir: /data/uploads       
-  url-prefix: https://cdn.xxx.com
+  url-prefix: https://www.picarran.xyz:8002/uploads
