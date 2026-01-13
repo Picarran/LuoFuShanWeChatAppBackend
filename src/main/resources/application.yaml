@@ -24,3 +24,7 @@ wechat:
 
 auth:
   tokenTtlDays: 30
+
+file:
+  upload-dir: /data/uploads       
+  url-prefix: https://cdn.xxx.com
