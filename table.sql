@@ -274,3 +274,6 @@ INSERT INTO user_exchange (user_id, item_id, code, is_redeemed, place_name) VALU
 (3, 4, 'CODE2233445566', 1, '成都茶叶店'),
 (3, 5, 'CODE3344556677', 0, '乐山大佛景区商店');
 
+-- 插入初始管理端解锁密码（密码为 "admin123456" 的 MD5 哈希值）
+INSERT INTO admin_config (unlock_password) VALUES
+(MD5('admin123456'));
