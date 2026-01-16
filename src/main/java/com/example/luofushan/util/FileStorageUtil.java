@@ -10,10 +10,11 @@ import java.util.UUID;
 
 public class FileStorageUtil {
 
-    public static String store(MultipartFile file, String uploadDir) throws IOException {
+    public static String store(MultipartFile file, String uploadDir, String fileType) throws IOException {
         LocalDate today = LocalDate.now();
         Path dir = Paths.get(
                 uploadDir,
+                fileType, // image / video / other
                 String.valueOf(today.getYear()),
                 String.format("%02d", today.getMonthValue()),
                 String.format("%02d", today.getDayOfMonth())
@@ -30,8 +31,9 @@ public class FileStorageUtil {
         Path target = dir.resolve(filename);
         file.transferTo(target.toFile());
 
-        // 返回相对路径
-        return today.getYear() + "/"
+        // 返回相对路径：fileType/yyyy/MM/dd/xxx.ext
+        return fileType + "/"
+                + today.getYear() + "/"
                 + String.format("%02d", today.getMonthValue()) + "/"
                 + String.format("%02d", today.getDayOfMonth()) + "/"
                 + filename;

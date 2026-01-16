@@ -17,9 +17,7 @@ public class CommonController {
 
     @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public Result<UploadFileResp> upload(@RequestPart("file") MultipartFile file) {
-        String url = fileUploadService.upload(file);
-        UploadFileResp resp = new UploadFileResp();
-        resp.setUrl(url);
+        UploadFileResp resp = fileUploadService.upload(file);
         return Result.buildSuccess(resp);
     }
 }
