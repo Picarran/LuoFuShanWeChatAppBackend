@@ -8,7 +8,7 @@ import com.example.luofushan.dto.req.PostListReq;
 import com.example.luofushan.dto.req.UserPostReq;
 import com.example.luofushan.dto.resp.PostCommentListResp;
 import com.example.luofushan.dto.resp.PostCommentResp;
-import com.example.luofushan.dto.resp.PostListRealResp;
+import com.example.luofushan.dto.resp.PostListResp;
 import com.example.luofushan.dto.resp.UserPostResp;
 import com.example.luofushan.service.UserPostService;
 import jakarta.annotation.Resource;
@@ -27,8 +27,8 @@ public class UserPostController {
     }
 
     @GetMapping("/list")
-    public Result<Page<PostListRealResp>> listPosts(PostListReq req) {
-        Page<PostListRealResp> page = userPostService.listPosts(req);
+    public Result<Page<PostListResp>> listPosts(PostListReq req) {
+        Page<PostListResp> page = userPostService.listPosts(req);
         return Result.buildSuccess(page);
     }
 

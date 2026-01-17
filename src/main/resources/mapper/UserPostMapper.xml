@@ -5,11 +5,13 @@
 
 <mapper namespace="com.example.luofushan.dao.mapper.UserPostMapper">
 
-    <select id="selectPosts" resultMap="PostListRespResultMap">
+    <select id="selectPosts" resultMap="PostListRespMap">
         SELECT
         up.id,
-        up.content AS title,
-        cl.name AS location_name,
+        up.user_id AS userId,
+        up.content AS content,
+        cl.id AS locationId,
+        cl.name AS locationName,
         up.images,
         cl.latitude,
         cl.longitude,
@@ -23,7 +25,7 @@
         ) AS distance,
         up.like_count,
         up.comment_count,
-        up.created_at AS post_time
+        up.created_at AS postTime
         FROM user_post up
         LEFT JOIN checkin_location cl ON up.location_id = cl.id
         WHERE up.delflag = 0
@@ -47,18 +49,28 @@
         LIMIT #{offset}, #{size}
     </select>
 
-    <resultMap id="PostListRespResultMap" type="com.example.luofushan.dto.resp.PostListResp">
+    <resultMap id="PostListRespMap" type="com.example.luofushan.dto.resp.PostListResp">
         <id property="id" column="id"/>
-        <result property="title" column="title"/>
-        <result property="locationName" column="location_name"/>
+        <result property="userId" column="userId"/>
+        <result property="content" column="content"/>
+
+        <result property="locationId" column="locationId"/>
+        <result property="locationName" column="locationName"/>
+
+        <!-- ⭐ 关键：显式指定 TypeHandler -->
+        <result property="images"
+                column="images"
+                typeHandler="com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler"/>
+
         <result property="latitude" column="latitude"/>
         <result property="longitude" column="longitude"/>
-        <result property="imagesStr" column="images"/>
+        <result property="distance" column="distance"/>
+
         <result property="likeCount" column="like_count"/>
         <result property="commentCount" column="comment_count"/>
-        <result property="postTime" column="post_time"/>
-        <result property="distance" column="distance"/>
+        <result property="postTime" column="postTime"/>
     </resultMap>
+
 
     <select id="countPosts" resultType="int">
         SELECT COUNT(*)

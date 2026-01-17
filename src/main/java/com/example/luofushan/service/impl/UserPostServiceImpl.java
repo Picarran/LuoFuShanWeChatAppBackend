@@ -1,7 +1,6 @@
 package com.example.luofushan.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
-import com.alibaba.fastjson2.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.luofushan.common.exception.LuoFuShanException;
@@ -22,9 +21,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class UserPostServiceImpl implements UserPostService {
@@ -54,7 +51,7 @@ public class UserPostServiceImpl implements UserPostService {
     }
 
     @Override
-    public Page<PostListRealResp> listPosts(PostListReq req) {
+    public Page<PostListResp> listPosts(PostListReq req) {
         req.initDefault();
         int offset = (req.getPage() - 1) * req.getSize();
 
@@ -62,35 +59,12 @@ public class UserPostServiceImpl implements UserPostService {
             throw LuoFuShanException.hasNoDistanceInfo();
         }
 
-        List<PostListResp> originRecords = userPostMapper.selectPosts(req.getFuzzy(), req.getLatitude(), req.getLongitude(), offset, req.getSize(), req.getSortBy());
+        List<PostListResp> records = userPostMapper.selectPosts(req.getFuzzy(), req.getLatitude(), req.getLongitude(), offset, req.getSize(), req.getSortBy());
         int total = userPostMapper.countPosts(req.getFuzzy());
 
-        // ==== 转换为最终返回的 PostListRealResp ====
-        List<PostListRealResp> realList = originRecords.stream()
-                .map(item -> {
-                    // 1. 复制除 images 外的所有字段
-                    PostListRealResp real = BeanUtil.toBean(item, PostListRealResp.class);
-
-                    // 2. 解析 imagesStr → List<String>
-                    if (item.getImagesStr() != null) {
-                        try {
-                            real.setImages(JSON.parseArray(item.getImagesStr(), String.class));
-                        } catch (Exception e) {
-                            // JSON 非法时防止抛错（例如 null 或非 JSON 格式）
-                            real.setImages(Collections.emptyList());
-                        }
-                    } else {
-                        real.setImages(Collections.emptyList());
-                    }
-
-                    return real;
-                })
-                .collect(Collectors.toList());
-
-        // 拼 Page（保持你现有的 Page 结构）
-        Page<PostListRealResp> page = new Page<>(req.getPage(), req.getSize());
+        Page<PostListResp> page = new Page<>(req.getPage(),req.getSize(),total);
         page.setTotal(total);
-        page.setRecords(realList);
+        page.setRecords(records);
 
         return page;
     }
