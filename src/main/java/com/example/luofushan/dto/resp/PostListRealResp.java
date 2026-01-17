@@ -10,7 +10,10 @@ import java.util.List;
 @Builder
 public class PostListRealResp {
     private Long id;
-    private String title;
+    private Long userId;
+    private String content;
+
+    private Long locationId;
     private String locationName;
 
     private List<String> images; // 真正要返回给前端

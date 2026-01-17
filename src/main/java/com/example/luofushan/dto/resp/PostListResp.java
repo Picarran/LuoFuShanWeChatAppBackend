@@ -9,7 +9,12 @@ import java.time.LocalDateTime;
 @Builder
 public class PostListResp {
     private Long id;
-    private String title;
+
+    private Long userId;
+
+    private String content;
+
+    private Long locationId;
     private String locationName;
     private String imagesStr;
 

@@ -5,12 +5,14 @@
 
 <mapper namespace="com.example.luofushan.dao.mapper.UserPostMapper">
 
-    <select id="selectPosts" resultMap="PostListRespResultMap">
+    <select id="selectPosts" resultType="com.example.luofushan.dto.resp.PostListResp">
         SELECT
         up.id,
-        up.content AS title,
-        cl.name AS location_name,
-        up.images,
+        up.user_id AS userId,
+        up.content AS content,
+        cl.id AS locationId,
+        cl.name AS locationName,
+        up.images AS imagesStr,
         cl.latitude,
         cl.longitude,
         IF(
@@ -23,7 +25,7 @@
         ) AS distance,
         up.like_count,
         up.comment_count,
-        up.created_at AS post_time
+        up.created_at AS postTime
         FROM user_post up
         LEFT JOIN checkin_location cl ON up.location_id = cl.id
         WHERE up.delflag = 0
@@ -46,19 +48,6 @@
         </choose>
         LIMIT #{offset}, #{size}
     </select>
-
-    <resultMap id="PostListRespResultMap" type="com.example.luofushan.dto.resp.PostListResp">
-        <id property="id" column="id"/>
-        <result property="title" column="title"/>
-        <result property="locationName" column="location_name"/>
-        <result property="latitude" column="latitude"/>
-        <result property="longitude" column="longitude"/>
-        <result property="imagesStr" column="images"/>
-        <result property="likeCount" column="like_count"/>
-        <result property="commentCount" column="comment_count"/>
-        <result property="postTime" column="post_time"/>
-        <result property="distance" column="distance"/>
-    </resultMap>
 
     <select id="countPosts" resultType="int">
         SELECT COUNT(*)
