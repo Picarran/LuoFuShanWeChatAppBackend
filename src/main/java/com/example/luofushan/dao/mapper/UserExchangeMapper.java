@@ -2,6 +2,7 @@ package com.example.luofushan.dao.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.example.luofushan.dao.entity.UserExchange;
+import com.example.luofushan.dto.resp.MerchantExchangeRecordResp;
 import com.example.luofushan.dto.resp.MyExchangeRecordResp;
 import org.apache.ibatis.annotations.Param;
 
@@ -18,6 +19,18 @@ public interface UserExchangeMapper extends BaseMapper<UserExchange> {
 
     int countMyExchange(
             @Param("userId") Long userId,
+            @Param("isRedeemed") Integer isRedeemed
+    );
+
+    List<MerchantExchangeRecordResp> selectMerchantExchangeList(
+            @Param("merchantId") Long merchantId,
+            @Param("isRedeemed") Integer isRedeemed,
+            @Param("offset") int offset,
+            @Param("size") int size
+    );
+
+    int countMerchantExchange(
+            @Param("merchantId") Long merchantId,
             @Param("isRedeemed") Integer isRedeemed
     );
 }

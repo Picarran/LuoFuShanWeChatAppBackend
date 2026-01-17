@@ -1,11 +1,8 @@
 package com.example.luofushan.service;
 
-import com.example.luofushan.dto.req.MerchantLoginReq;
-import com.example.luofushan.dto.req.MerchantResourceBaseUpdateReq;
-import com.example.luofushan.dto.req.MerchantResourceContentUpdateReq;
-import com.example.luofushan.dto.resp.MerchantLoginResp;
-import com.example.luofushan.dto.resp.MerchantProfileResp;
-import com.example.luofushan.dto.resp.MerchantResourceDetailResp;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.example.luofushan.dto.req.*;
+import com.example.luofushan.dto.resp.*;
 
 public interface MerchantService {
 
@@ -18,4 +15,14 @@ public interface MerchantService {
     void updateResourceBase(MerchantResourceBaseUpdateReq req);
 
     void updateResourceContent(MerchantResourceContentUpdateReq req);
+
+    Page<MallItemListResp> getMallItemList(MerchantMallItemListReq req);
+
+    Page<MerchantExchangeRecordResp> getExchangeList(MerchantExchangeListReq req);
+
+    MerchantRedeemResp redeemCode(MerchantRedeemReq req);
+
+    MerchantUserPointsResp getUserPoints(MerchantUserPointsReq req);
+
+    MerchantUserPointsResp updateUserPoints(MerchantPointsUpdateReq req);
 }
