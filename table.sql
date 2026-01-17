@@ -165,13 +165,17 @@ CREATE TABLE user_exchange (
     code VARCHAR(64) NOT NULL UNIQUE COMMENT '兑换卡密（兑换凭证）',
     is_redeemed TINYINT NOT NULL DEFAULT 0 COMMENT '是否已兑换（0否/1是）',
     place_name VARCHAR(64) NULL COMMENT '兑换地点名称',
+    redeemed_at DATETIME NULL COMMENT '核销时间',
+    merchant_id BIGINT NULL COMMENT '核销商家ID',
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '兑换时间',
     updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
     delflag TINYINT(1) NOT NULL DEFAULT 0 COMMENT '逻辑删除标志',
     CONSTRAINT fk_exchange_user FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE,
     CONSTRAINT fk_exchange_item FOREIGN KEY (item_id) REFERENCES mall_item(id) ON DELETE CASCADE,
+    CONSTRAINT fk_exchange_merchant FOREIGN KEY (merchant_id) REFERENCES merchant(id) ON DELETE SET NULL,
     INDEX idx_exchange_user (user_id),
-    INDEX idx_exchange_item (item_id)
+    INDEX idx_exchange_item (item_id),
+    INDEX idx_exchange_merchant (merchant_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- =====================================

@@ -2,7 +2,6 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-
 <mapper namespace="com.example.luofushan.dao.mapper.UserExchangeMapper">
 
     <select id="selectMyExchangeList" resultType="com.example.luofushan.dto.resp.MyExchangeRecordResp">
@@ -16,8 +15,8 @@
         FROM user_exchange ue
         LEFT JOIN mall_item mi ON ue.item_id = mi.id
         WHERE ue.user_id = #{userId}
-          AND ue.delflag = 0
           AND ue.is_redeemed = #{isRedeemed}
+          AND ue.delflag = 0
         ORDER BY ue.created_at DESC
         LIMIT #{offset}, #{size}
     </select>
@@ -26,8 +25,35 @@
         SELECT COUNT(*)
         FROM user_exchange
         WHERE user_id = #{userId}
-          AND delflag = 0
           AND is_redeemed = #{isRedeemed}
+          AND delflag = 0
+    </select>
+
+    <select id="selectMerchantExchangeList" resultType="com.example.luofushan.dto.resp.MerchantExchangeRecordResp">
+        SELECT
+            ue.id,
+            ue.user_id AS userId,
+            mi.name AS itemName,
+            ue.code,
+            ue.is_redeemed AS isRedeemed,
+            ue.place_name AS placeName,
+            ue.created_at AS createdAt,
+            ue.redeemed_at AS redeemedAt
+        FROM user_exchange ue
+        LEFT JOIN mall_item mi ON ue.item_id = mi.id
+        WHERE ue.merchant_id = #{merchantId}
+          AND ue.is_redeemed = #{isRedeemed}
+          AND ue.delflag = 0
+        ORDER BY ue.created_at DESC
+        LIMIT #{offset}, #{size}
+    </select>
+
+    <select id="countMerchantExchange" resultType="int">
+        SELECT COUNT(*)
+        FROM user_exchange
+        WHERE merchant_id = #{merchantId}
+          AND is_redeemed = #{isRedeemed}
+          AND delflag = 0
     </select>
 
 </mapper>
