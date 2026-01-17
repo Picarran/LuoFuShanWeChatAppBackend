@@ -7,8 +7,8 @@ DROP TABLE IF EXISTS user_post;
 DROP TABLE IF EXISTS user_checkin;
 DROP TABLE IF EXISTS checkin_location;
 DROP TABLE IF EXISTS user_token;
-DROP TABLE IF EXISTS merchant;
 DROP TABLE IF EXISTS merchant_token;
+DROP TABLE IF EXISTS merchant;
 DROP TABLE IF EXISTS resource;
 DROP TABLE IF EXISTS user_exchange;
 DROP TABLE IF EXISTS mall_item;
@@ -58,7 +58,7 @@ CREATE TABLE resource (
     latitude DOUBLE NULL COMMENT '地理纬度',
     longitude DOUBLE NULL COMMENT '地理经度',
     hot_score INT DEFAULT 0 COMMENT '热度（排序权重）',
-    content_json JSON NULL COMMENT '组件化图文内容 JSON 数据',
+    content_json TEXT NULL COMMENT '组件化图文内容 JSON 数据',
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
     delflag TINYINT(1) NOT NULL DEFAULT 0 COMMENT '逻辑删除标志'
