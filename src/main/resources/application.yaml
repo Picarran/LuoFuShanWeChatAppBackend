@@ -12,6 +12,10 @@ spring:
     redis:
       host: 127.0.0.1
       port: 6379
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 150MB
 
 mybatis-plus:
   configuration:
@@ -26,5 +30,5 @@ auth:
   tokenTtlDays: 30
 
 file:
-  upload-dir: /data/uploads       
+  upload-dir: /home/luofushan/uploads
   url-prefix: https://www.picarran.xyz:8002/uploads
