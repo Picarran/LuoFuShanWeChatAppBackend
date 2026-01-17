@@ -4,9 +4,11 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.luofushan.common.exception.LuoFuShanException;
 import com.example.luofushan.dao.entity.CheckinLocation;
+import com.example.luofushan.dao.entity.User;
 import com.example.luofushan.dao.entity.UserCheckin;
 import com.example.luofushan.dao.mapper.CheckinLocationMapper;
 import com.example.luofushan.dao.mapper.UserCheckinMapper;
+import com.example.luofushan.dao.mapper.UserMapper;
 import com.example.luofushan.dto.req.UserCheckinHistoryReq;
 import com.example.luofushan.dto.req.UserCheckinReq;
 import com.example.luofushan.dto.resp.CheckinLocationListResp;
@@ -29,6 +31,9 @@ public class CheckinServiceImpl implements CheckinService {
     private CheckinLocationMapper checkinLocationMapper;
     @Resource
     private UserCheckinMapper userCheckinMapper;
+
+    @Resource
+    private UserMapper userMapper;
 
     @Override
     public List<CheckinLocationListResp> getAllLocations() {
@@ -68,10 +73,18 @@ public class CheckinServiceImpl implements CheckinService {
     @Transactional
     public UserCheckinResp doUserCheckin(UserCheckinReq req) {
 
-        // 1. 校验景点是否存在
+        // 1. 校验景点是否存在, 校验用户
         CheckinLocation loc = checkinLocationMapper.selectById(req.getLocationId());
         if (loc == null) {
             throw LuoFuShanException.locationNotExists();
+        }
+        Long userId = UserContext.getUserId();
+        if (userId == null) {
+            throw new LuoFuShanException("未登录");
+        }
+        User user = userMapper.selectById(userId);
+        if (user == null) {
+            throw new LuoFuShanException("用户不存在");
         }
 
         // 2. 插入打卡记录（利用 UNIQUE KEY 防重复）
@@ -93,7 +106,12 @@ public class CheckinServiceImpl implements CheckinService {
         // 4. 获取更新后的今日打卡数
         Long todayCount = checkinLocationMapper.selectTodayCount(req.getLocationId());
 
-        // 5. 构造返回对象
+        // 5. 更新用户积分
+        int score = loc.getScore();
+        user.setPoints(user.getPoints() + score);
+        userMapper.updateById(user);
+
+        // 6. 构造返回对象
         return UserCheckinResp.builder()
                 .id(uc.getId())
                 .locationId(loc.getId())

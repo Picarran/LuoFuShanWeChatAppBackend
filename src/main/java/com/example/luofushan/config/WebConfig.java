@@ -13,8 +13,8 @@ public class WebConfig {
     public FilterRegistrationBean<Filter> tokenFilterRegistration(TokenFilter tokenFilter) {
         FilterRegistrationBean<Filter> reg = new FilterRegistrationBean<>();
         reg.setFilter(tokenFilter);
-        //reg.addUrlPatterns("/*"); 
-        reg.addUrlPatterns("/post/*", "/checkin/*","/user/*","/exchange/*", "/mall/item/exchange"); 
+//        reg.addUrlPatterns("/*");
+        reg.addUrlPatterns("/post/*", "/checkin/*","/user/*","/exchange/*", "/mall/item/exchange", "/common/uploads");
         reg.setOrder(1);
         return reg;
     }

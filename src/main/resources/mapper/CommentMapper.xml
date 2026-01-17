@@ -8,7 +8,7 @@
     <!-- 查询评论列表 -->
     <select id="selectCommentList" resultType="com.example.luofushan.dto.resp.PostCommentListResp">
         SELECT
-        c.id AS commentId,
+        c.id,
         c.user_id AS userId,
         u.nickname,
         u.avatar_url AS avatarUrl,

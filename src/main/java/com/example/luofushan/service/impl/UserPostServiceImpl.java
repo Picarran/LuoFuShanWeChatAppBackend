@@ -2,6 +2,7 @@ package com.example.luofushan.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.alibaba.fastjson2.JSON;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.luofushan.common.exception.LuoFuShanException;
 import com.example.luofushan.dao.entity.PostComment;
@@ -19,6 +20,7 @@ import com.example.luofushan.service.UserPostService;
 import jakarta.annotation.Resource;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.List;
@@ -94,11 +96,20 @@ public class UserPostServiceImpl implements UserPostService {
     }
 
     @Override
+    @Transactional
     public PostCommentResp addComment(PostCommentReq postCommentReq) {
         PostComment comment = BeanUtil.toBean(postCommentReq, PostComment.class);
         comment.setUserId(UserContext.getUserId());
         try {
             postCommentMapper.insert(comment);
+
+            // 更新count
+            LambdaQueryWrapper<UserPost> wrapper = new LambdaQueryWrapper<>();
+            wrapper.eq(UserPost::getDelflag, 0)
+                    .eq(UserPost::getId, postCommentReq.getPostId());
+            UserPost up = userPostMapper.selectOne(wrapper);
+            up.setCommentCount(up.getCommentCount() + 1);
+            userPostMapper.updateById(up);
         }catch (DataIntegrityViolationException e) {
             e.printStackTrace();
             throw LuoFuShanException.UserOrPostNotExists();
