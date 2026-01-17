@@ -7,10 +7,14 @@ DROP TABLE IF EXISTS user_post;
 DROP TABLE IF EXISTS user_checkin;
 DROP TABLE IF EXISTS checkin_location;
 DROP TABLE IF EXISTS user_token;
+DROP TABLE IF EXISTS merchant;
+DROP TABLE IF EXISTS merchant_token;
 DROP TABLE IF EXISTS resource;
-DROP TABLE IF EXISTS user;
-DROP TABLE IF EXISTS mall_item;
 DROP TABLE IF EXISTS user_exchange;
+DROP TABLE IF EXISTS mall_item;
+DROP TABLE IF EXISTS user;
+DROP TABLE IF EXISTS admin_token;
+DROP TABLE IF EXISTS admin_config;
 
 CREATE TABLE user (
     id BIGINT AUTO_INCREMENT PRIMARY KEY COMMENT '用户ID',
@@ -206,7 +210,7 @@ CREATE TABLE merchant (
     status TINYINT DEFAULT 1 COMMENT '状态：1启用 0禁用',
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-    UNIQUE KEY uk_merchant_username (username)
+    UNIQUE KEY uk_merchant_username (username),
     UNIQUE KEY uk_merchant_resource (resource_id),
     
     CONSTRAINT fk_merchant_resource
