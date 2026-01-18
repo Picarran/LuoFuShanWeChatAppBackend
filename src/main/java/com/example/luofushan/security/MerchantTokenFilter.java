@@ -22,6 +22,13 @@ public class MerchantTokenFilter implements Filter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest req = (HttpServletRequest) request;
+
+        // 放行预检
+        if ("OPTIONS".equalsIgnoreCase(req.getMethod())) {
+            chain.doFilter(request, response);
+            return;
+        }
+
         String uri = req.getRequestURI();
 
         if (!uri.startsWith("/merchant")) {

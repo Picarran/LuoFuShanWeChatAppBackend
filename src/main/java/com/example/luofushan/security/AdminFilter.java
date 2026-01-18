@@ -20,8 +20,16 @@ public class AdminFilter implements Filter {
     private final AdminTokenMapper adminTokenMapper;
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+    public void doFilter(ServletRequest request, ServletResponse response,
+                         FilterChain chain) throws IOException, ServletException {
         HttpServletRequest req = (HttpServletRequest) request;
+
+        //预检请求直接放行
+        if ("OPTIONS".equalsIgnoreCase(req.getMethod())) {
+            chain.doFilter(request, response);
+            return;
+        }
+
         String uri = req.getRequestURI();
 
         if (!uri.startsWith("/admin")) {
