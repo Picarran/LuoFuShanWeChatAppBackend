@@ -53,6 +53,13 @@ public class TokenFilter implements Filter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest req = (HttpServletRequest) request;
+
+        // 放行预检
+        if ("OPTIONS".equalsIgnoreCase(req.getMethod())) {
+            chain.doFilter(request, response);
+            return;
+        }
+
         try {
             String uri = req.getRequestURI();
 
