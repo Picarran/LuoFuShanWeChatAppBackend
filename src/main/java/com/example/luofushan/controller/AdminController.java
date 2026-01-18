@@ -50,7 +50,7 @@ public class AdminController {
         return Result.buildSuccess(result);
     }
 
-    @PostMapping
+    @PostMapping("/checkin/location/save")
     public Result<AdminSaveCheckinLocationResp> saveCheckinLocation(@RequestBody AdminSaveCheckinLocationReq req) {
         return Result.buildSuccess(adminService.saveCheckinLocation(req));
     }
@@ -66,4 +66,8 @@ public class AdminController {
         return Result.buildSuccess(locations);
     }
 
+    @PostMapping("/merchant")
+    public Result<AdminCreateMerchantResp> createMerchant(@RequestBody AdminCreateMerchantReq req) {
+        return Result.buildSuccess(adminService.createMerchant(req));
+    }
 }

@@ -3,18 +3,10 @@ package com.example.luofushan.service.impl;
 import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.example.luofushan.common.exception.LuoFuShanException;
-import com.example.luofushan.dao.entity.AdminConfig;
-import com.example.luofushan.dao.entity.AdminToken;
-import com.example.luofushan.dao.entity.CheckinLocation;
-import com.example.luofushan.dao.entity.Resource;
-import com.example.luofushan.dao.mapper.AdminConfigMapper;
-import com.example.luofushan.dao.mapper.AdminTokenMapper;
-import com.example.luofushan.dao.mapper.CheckinLocationMapper;
-import com.example.luofushan.dao.mapper.ResourceMapper;
-import com.example.luofushan.dto.req.AdminSaveCheckinLocationReq;
-import com.example.luofushan.dto.req.AdminPasswordUpdateReq;
-import com.example.luofushan.dto.req.AdminSaveResourceReq;
-import com.example.luofushan.dto.req.AdminUnlockReq;
+import com.example.luofushan.dao.entity.*;
+import com.example.luofushan.dao.mapper.*;
+import com.example.luofushan.dto.req.*;
+import com.example.luofushan.dto.resp.AdminCreateMerchantResp;
 import com.example.luofushan.dto.resp.AdminSaveCheckinLocationResp;
 import com.example.luofushan.dto.resp.AdminSaveResourceResp;
 import com.example.luofushan.dto.resp.AdminUnlockResp;
@@ -38,6 +30,7 @@ public class AdminServiceImpl implements AdminService {
     private final AdminTokenMapper adminTokenMapper;
     private final ResourceMapper resourceMapper;
     private final CheckinLocationMapper checkinLocationMapper;
+    private final MerchantMapper merchantMapper;
 
     @Override
     public AdminUnlockResp unlock(AdminUnlockReq req) {
@@ -195,5 +188,33 @@ public class AdminServiceImpl implements AdminService {
         checkinLocation.setDelflag(1);
         checkinLocationMapper.updateById(checkinLocation);
         return "删除成功";
+    }
+
+    @Override
+    public AdminCreateMerchantResp createMerchant(AdminCreateMerchantReq req) {
+        if(StringUtil.isNullOrEmpty(req.getName()) || StringUtil.isNullOrEmpty(req.getType())
+        || StringUtil.isNullOrEmpty(req.getUsername()) || StringUtil.isNullOrEmpty(req.getPassword())) {
+            throw LuoFuShanException.adminFail("名称或类型为空");
+        }
+        List<String> types = List.of("景点", "住宿", "餐饮", "商家");
+        if(!types.contains(req.getType())) {
+            throw LuoFuShanException.adminFail("类型不为：景点/住宿/餐饮/商家");
+        }
+        if(req.getResourceId()==null) {
+            throw LuoFuShanException.adminFail("资源id为空");
+        }
+
+        LambdaQueryWrapper<Resource> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(Resource::getDelflag, 0)
+                .eq(Resource::getId, req.getResourceId());
+        Resource resource = resourceMapper.selectOne(wrapper);
+        if(resource==null) {
+            throw LuoFuShanException.adminFail("无资源id对应的资源");
+        }
+
+        req.setPassword(DigestUtils.md5DigestAsHex(req.getPassword().getBytes(StandardCharsets.UTF_8)));
+        Merchant merchant = BeanUtil.toBean(req, Merchant.class);
+        merchantMapper.insert(merchant);
+        return BeanUtil.toBean(merchant, AdminCreateMerchantResp.class);
     }
 }
