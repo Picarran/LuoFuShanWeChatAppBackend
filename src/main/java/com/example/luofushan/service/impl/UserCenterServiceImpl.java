@@ -6,6 +6,7 @@ import com.example.luofushan.dao.mapper.UserMapper;
 import com.example.luofushan.dto.req.UpdateUserProfileReq;
 import com.example.luofushan.dto.resp.UserProfileResp;
 import com.example.luofushan.security.UserContext;
+import com.example.luofushan.service.CheckinService;
 import com.example.luofushan.service.UserCenterService;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
@@ -16,6 +17,8 @@ public class UserCenterServiceImpl implements UserCenterService {
 
     @Resource
     private UserMapper userMapper;
+    @Resource
+    private CheckinService checkinService;
 
     @Override
     public UserProfileResp getProfile() {
@@ -34,7 +37,9 @@ public class UserCenterServiceImpl implements UserCenterService {
         resp.setNickname(user.getNickname());
         resp.setAvatarUrl(user.getAvatarUrl());
         resp.setPoints(user.getPoints());
-        resp.setWeeklyCheckinCount(user.getWeeklyCheckinCount());
+        resp.setWeeklyCheckinCount(checkinService.getUserCheckinWeekCount(userId));
+        resp.setDaylyCheckinCount(checkinService.getUserCheckinDayCount(userId));
+        resp.setMonthlyCheckinCount(checkinService.getUserCheckinMonthCount(userId));
         return resp;
     }
 
@@ -69,7 +74,9 @@ public class UserCenterServiceImpl implements UserCenterService {
         resp.setNickname(user.getNickname());
         resp.setAvatarUrl(user.getAvatarUrl());
         resp.setPoints(user.getPoints());
-        resp.setWeeklyCheckinCount(user.getWeeklyCheckinCount());
+        resp.setWeeklyCheckinCount(checkinService.getUserCheckinWeekCount(userId));
+        resp.setDaylyCheckinCount(checkinService.getUserCheckinDayCount(userId));
+        resp.setMonthlyCheckinCount(checkinService.getUserCheckinMonthCount(userId));
         return resp;
     }
 }

@@ -1,4 +1,5 @@
 package com.example.luofushan.service.impl;
+
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.example.luofushan.config.AuthProperties;
 import com.example.luofushan.dao.entity.User;
@@ -8,11 +9,12 @@ import com.example.luofushan.dao.mapper.UserTokenMapper;
 import com.example.luofushan.dto.resp.LoginResp;
 import com.example.luofushan.dto.resp.WeChatSessionResp;
 import com.example.luofushan.service.AuthService;
+import com.example.luofushan.service.CheckinService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -27,6 +29,7 @@ public class AuthServiceImpl implements AuthService {
     private final RestTemplate restTemplate;
     private final UserMapper userMapper;
     private final UserTokenMapper userTokenMapper;
+    private final CheckinService checkinService;
 
     @Override
     public LoginResp login(String codeId, String appId, String secret) {
@@ -67,7 +70,7 @@ public class AuthServiceImpl implements AuthService {
             user.setNickname("游客");
             user.setAvatarUrl(null);
             user.setPoints(0);
-            user.setWeeklyCheckinCount(0);
+//            user.setWeeklyCheckinCount(0);
             userMapper.insert(user);
         }
 
@@ -81,6 +84,9 @@ public class AuthServiceImpl implements AuthService {
         ut.setExpireAt(expireAt);
         userTokenMapper.insert(ut);
 
-        return new LoginResp(token, user.getId(), user.getNickname(), user.getAvatarUrl(), user.getPoints(), user.getWeeklyCheckinCount());
+        return new LoginResp(token, user.getId(), user.getNickname(), user.getAvatarUrl(), user.getPoints(),
+                checkinService.getUserCheckinWeekCount(user.getId()),
+                checkinService.getUserCheckinDayCount(user.getId()),
+                checkinService.getUserCheckinMonthCount(user.getId()));
     }
 }

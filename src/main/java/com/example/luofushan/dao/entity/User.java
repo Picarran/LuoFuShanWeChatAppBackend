@@ -22,6 +22,6 @@ public class User extends BaseDO {
 
     private Integer points; // 积分，默认0
 
-    @TableField("weekly_checkin_count")
-    private Integer weeklyCheckinCount;
+//    @TableField("weekly_checkin_count")
+//    private Integer weeklyCheckinCount;
 }

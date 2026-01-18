@@ -20,7 +20,7 @@ public class CheckinLocation extends BaseDO {
 
     private Integer score;
 
-    private Long todayHasCheckin;
+//    private Long todayHasCheckin;
 
     private String coverImg;
 }

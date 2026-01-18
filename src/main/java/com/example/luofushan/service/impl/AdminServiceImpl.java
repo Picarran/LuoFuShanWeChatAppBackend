@@ -158,7 +158,7 @@ public class AdminServiceImpl implements AdminService {
         // 插入
         if(req.getId() == null) {
             checkinLocation = BeanUtil.toBean(req, CheckinLocation.class);
-            checkinLocation.setTodayHasCheckin(0L);
+//            checkinLocation.setTodayHasCheckin(0L);
             checkinLocationMapper.insert(checkinLocation);
         }
         // 更新

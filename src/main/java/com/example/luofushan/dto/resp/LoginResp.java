@@ -13,5 +13,7 @@ public class LoginResp {
     private String nickname;
     private String avatarUrl;
     private Integer points;
-    private Integer weeklyCheckinCount;
+    private Long weeklyCheckinCount;
+    private Long daylyCheckinCount;
+    private Long monthlyCheckinCount;
 }
