@@ -251,4 +251,26 @@ public class AdminServiceImpl implements AdminService {
 
         return resp;
     }
+
+    @Override
+    public AdminUpdateMerchantResp updateMerchant(AdminUpdateMerchantReq req) {
+        LambdaQueryWrapper<Merchant> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(Merchant::getDelflag, 0)
+                .eq(Merchant::getId, req.getId());
+        Merchant merchant = merchantMapper.selectOne(wrapper);
+        if(merchant==null) throw LuoFuShanException.adminFail("商家不存在");
+
+//        if(req.getContactName()!=null) merchant.setContcatName()
+//        if(req.getContactPhone()!=null) merchant.setContactPhone()
+        if(req.getStatus()!=null) {
+            if(req.getStatus()!=0 && req.getStatus()!=1) {
+                throw LuoFuShanException.adminFail("启用状态只能为0或1");
+            }
+            merchant.setStatus(req.getStatus());
+        }
+        if(req.getName()!=null) merchant.setName(req.getName());
+        merchantMapper.updateById(merchant);
+
+        return BeanUtil.toBean(merchant, AdminUpdateMerchantResp.class);
+    }
 }

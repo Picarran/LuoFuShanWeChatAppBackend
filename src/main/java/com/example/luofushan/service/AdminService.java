@@ -23,4 +23,6 @@ public interface AdminService {
     Page<AdminMerchantListResp> listMerchant(AdminMerchantListReq req);
 
     AdminMerchantDetailResp getMerchantDetail(Long id);
+
+    AdminUpdateMerchantResp updateMerchant(AdminUpdateMerchantReq req);
 }

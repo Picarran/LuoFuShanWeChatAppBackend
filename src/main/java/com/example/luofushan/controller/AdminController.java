@@ -80,4 +80,9 @@ public class AdminController {
     public Result<AdminMerchantDetailResp> getMerchantDetail(@RequestParam Long id) {
         return Result.buildSuccess(adminService.getMerchantDetail(id));
     }
+
+    @PostMapping("/merchant/update")
+    public Result<AdminUpdateMerchantResp> updateMerchant(@RequestBody AdminUpdateMerchantReq req) {
+        return Result.buildSuccess(adminService.updateMerchant(req));
+    }
 }
