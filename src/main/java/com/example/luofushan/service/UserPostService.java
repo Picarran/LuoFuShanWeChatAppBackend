@@ -1,14 +1,8 @@
 package com.example.luofushan.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.example.luofushan.dto.req.PostCommentListReq;
-import com.example.luofushan.dto.req.PostCommentReq;
-import com.example.luofushan.dto.req.PostListReq;
-import com.example.luofushan.dto.req.UserPostReq;
-import com.example.luofushan.dto.resp.PostCommentListResp;
-import com.example.luofushan.dto.resp.PostCommentResp;
-import com.example.luofushan.dto.resp.PostListResp;
-import com.example.luofushan.dto.resp.UserPostResp;
+import com.example.luofushan.dto.req.*;
+import com.example.luofushan.dto.resp.*;
 
 public interface UserPostService {
 
@@ -19,4 +13,6 @@ public interface UserPostService {
     PostCommentResp addComment(PostCommentReq postCommentReq);
 
     Page<PostCommentListResp> listComments(PostCommentListReq req);
+
+    PostLikeResp likePost(PostLikeReq req);
 }

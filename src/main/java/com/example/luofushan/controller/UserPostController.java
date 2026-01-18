@@ -2,14 +2,8 @@ package com.example.luofushan.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.example.luofushan.dto.Result;
-import com.example.luofushan.dto.req.PostCommentListReq;
-import com.example.luofushan.dto.req.PostCommentReq;
-import com.example.luofushan.dto.req.PostListReq;
-import com.example.luofushan.dto.req.UserPostReq;
-import com.example.luofushan.dto.resp.PostCommentListResp;
-import com.example.luofushan.dto.resp.PostCommentResp;
-import com.example.luofushan.dto.resp.PostListResp;
-import com.example.luofushan.dto.resp.UserPostResp;
+import com.example.luofushan.dto.req.*;
+import com.example.luofushan.dto.resp.*;
 import com.example.luofushan.service.UserPostService;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.*;
@@ -40,5 +34,10 @@ public class UserPostController {
     @GetMapping("/comments")
     public Result<Page<PostCommentListResp>> getComments(PostCommentListReq req) {
         return Result.buildSuccess(userPostService.listComments(req));
+    }
+
+    @PostMapping("/like")
+    public Result<PostLikeResp> like(@RequestBody PostLikeReq req) {
+        return Result.buildSuccess(userPostService.likePost(req));
     }
 }
