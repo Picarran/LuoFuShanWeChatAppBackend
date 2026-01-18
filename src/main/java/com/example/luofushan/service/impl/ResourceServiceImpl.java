@@ -1,5 +1,6 @@
 package com.example.luofushan.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.luofushan.common.exception.LuoFuShanException;
@@ -20,7 +21,10 @@ import java.util.List;
 public class ResourceServiceImpl extends ServiceImpl<ResourceMapper, Resource> implements ResourceService {
     @Override
     public String getContent(Long id) {
-         Resource resource = baseMapper.selectById(id);
+        LambdaQueryWrapper<Resource> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(Resource::getDelflag, 0)
+                .eq(Resource::getId, id);
+         Resource resource = baseMapper.selectOne(wrapper);
          if(resource==null) {
              throw LuoFuShanException.resourceNotExists();
          }

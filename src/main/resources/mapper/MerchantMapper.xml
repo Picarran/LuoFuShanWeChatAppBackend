@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.luofushan.dao.mapper.MerchantMapper">
+
+    <select id="selectMerchantPage" resultType="com.example.luofushan.dto.resp.AdminMerchantListResp">
+        SELECT
+        id,
+        username,
+        type,
+        name,
+        resource_id AS resourceId,
+        status,
+        created_at AS createAt
+        FROM merchant
+        WHERE delflag = 0
+        <if test="type != null and type != 'ALL'">
+            AND type = #{type}
+        </if>
+        <if test="fuzzy != null and fuzzy != ''">
+            AND name LIKE CONCAT('%', #{fuzzy}, '%')
+        </if>
+        <if test="status != null and status != -1">
+            AND status = #{status}
+        </if>
+        LIMIT #{offset}, #{size}
+    </select>
+
+    <select id="countMerchant" resultType="int">
+        SELECT COUNT(*)
+        FROM merchant
+        WHERE delflag = 0
+        <if test="type != null and type != 'ALL'">
+            AND type = #{type}
+        </if>
+        <if test="fuzzy != null and fuzzy != ''">
+            AND name LIKE CONCAT('%', #{fuzzy}, '%')
+        </if>
+        <if test="status != null and status != -1">
+            AND status = #{status}
+        </if>
+    </select>
+</mapper>

@@ -76,7 +76,7 @@ public class CheckinServiceImpl implements CheckinService {
         // 1. 校验景点是否存在, 校验用户
         CheckinLocation loc = checkinLocationMapper.selectById(req.getLocationId());
         if (loc == null) {
-            throw LuoFuShanException.locationNotExists();
+            throw LuoFuShanException.checkinLocationNotExists();
         }
         Long userId = UserContext.getUserId();
         if (userId == null) {

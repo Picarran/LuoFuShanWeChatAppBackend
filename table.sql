@@ -7,8 +7,8 @@ DROP TABLE IF EXISTS user_post;
 DROP TABLE IF EXISTS user_checkin;
 DROP TABLE IF EXISTS checkin_location;
 DROP TABLE IF EXISTS user_token;
-DROP TABLE IF EXISTS merchant;
 DROP TABLE IF EXISTS merchant_token;
+DROP TABLE IF EXISTS merchant;
 DROP TABLE IF EXISTS resource;
 DROP TABLE IF EXISTS user_exchange;
 DROP TABLE IF EXISTS mall_item;
@@ -58,7 +58,7 @@ CREATE TABLE resource (
     latitude DOUBLE NULL COMMENT '地理纬度',
     longitude DOUBLE NULL COMMENT '地理经度',
     hot_score INT DEFAULT 0 COMMENT '热度（排序权重）',
-    content_json JSON NULL COMMENT '组件化图文内容 JSON 数据',
+    content_json TEXT NULL COMMENT '组件化图文内容 JSON 数据',
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
     delflag TINYINT(1) NOT NULL DEFAULT 0 COMMENT '逻辑删除标志'
@@ -141,6 +141,46 @@ CREATE TABLE post_comment (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- =====================================
+-- 商家端账号表 merchant
+-- =====================================
+CREATE TABLE merchant (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT '商家ID',
+    resource_id BIGINT NOT NULL COMMENT '关联的商家资源ID',
+    name VARCHAR(64) NOT NULL COMMENT '商家名称',
+    type ENUM('景点','住宿','餐饮','商家') NOT NULL COMMENT '商家类型',
+    username VARCHAR(64) NOT NULL COMMENT '登录账号',
+    password VARCHAR(128) NOT NULL COMMENT '加密后的密码',
+    contact_name VARCHAR(64) DEFAULT NULL COMMENT '联系人',
+    contact_phone VARCHAR(64) DEFAULT NULL COMMENT '联系电话',
+    address VARCHAR(255) DEFAULT NULL COMMENT '商家地址',
+    status TINYINT DEFAULT 1 COMMENT '状态：1启用 0禁用',
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    delflag TINYINT(1) NOT NULL DEFAULT 0 COMMENT '逻辑删除标志',
+    UNIQUE KEY uk_merchant_username (username),
+    UNIQUE KEY uk_merchant_resource (resource_id),
+
+    CONSTRAINT fk_merchant_resource
+        FOREIGN KEY (resource_id) REFERENCES resource(id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='商家账号表';
+
+-- =====================================
+-- 商家Token表 merchant_token
+-- =====================================
+CREATE TABLE merchant_token (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT '主键',
+    merchant_id BIGINT NOT NULL COMMENT '商家ID',
+    token VARCHAR(255) NOT NULL COMMENT '登录Token',
+    expired_at DATETIME NOT NULL COMMENT '过期时间',
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    UNIQUE KEY uk_merchant_token (token),
+    KEY idx_merchant_id (merchant_id),
+    CONSTRAINT fk_merchant_token_merchant
+        FOREIGN KEY (merchant_id) REFERENCES merchant(id)
+        ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='商家登录Token表';
+
+-- =====================================
 -- 兑换商城奖品表 mall_item
 -- =====================================
 
@@ -197,45 +237,6 @@ CREATE TABLE admin_token (
   expire_time DATETIME NOT NULL COMMENT '过期时间',
   create_time DATETIME DEFAULT CURRENT_TIMESTAMP
 ) COMMENT='管理端解锁会话表';
-
--- =====================================
--- 商家端账号表 merchant
--- =====================================
-CREATE TABLE merchant (
-    id BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT '商家ID',
-    resource_id BIGINT NOT NULL COMMENT '关联的商家资源ID',
-    name VARCHAR(64) NOT NULL COMMENT '商家名称',
-    type ENUM('景点','住宿','餐饮','商家') NOT NULL COMMENT '商家类型',
-    username VARCHAR(64) NOT NULL COMMENT '登录账号',
-    password VARCHAR(128) NOT NULL COMMENT '加密后的密码',
-    contactName VARCHAR(64) DEFAULT NULL COMMENT '联系人',
-    contactPhone VARCHAR(64) DEFAULT NULL COMMENT '联系电话',
-    address VARCHAR(255) DEFAULT NULL COMMENT '商家地址',
-    status TINYINT DEFAULT 1 COMMENT '状态：1启用 0禁用',
-    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-    UNIQUE KEY uk_merchant_username (username),
-    UNIQUE KEY uk_merchant_resource (resource_id),
-    
-    CONSTRAINT fk_merchant_resource
-        FOREIGN KEY (resource_id) REFERENCES resource(id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='商家账号表';
-
--- =====================================
--- 商家Token表 merchant_token
--- =====================================
-CREATE TABLE merchant_token (
-    id BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT '主键',
-    merchant_id BIGINT NOT NULL COMMENT '商家ID',
-    token VARCHAR(255) NOT NULL COMMENT '登录Token',
-    expired_at DATETIME NOT NULL COMMENT '过期时间',
-    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-    UNIQUE KEY uk_merchant_token (token),
-    KEY idx_merchant_id (merchant_id),
-    CONSTRAINT fk_merchant_token_merchant
-        FOREIGN KEY (merchant_id) REFERENCES merchant(id)
-        ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='商家登录Token表';
 
 
 -- 插入测试用户

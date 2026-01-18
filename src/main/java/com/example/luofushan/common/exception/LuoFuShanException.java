@@ -14,7 +14,7 @@ public class LuoFuShanException extends RuntimeException {
         return new LuoFuShanException("景点/商家/住宿/餐饮不存在!");
     }
 
-    public static LuoFuShanException locationNotExists() {
+    public static LuoFuShanException checkinLocationNotExists() {
         return new LuoFuShanException("打卡点不存在!");
     }
 
@@ -45,4 +45,6 @@ public class LuoFuShanException extends RuntimeException {
     public static LuoFuShanException fileUploadFailed(String msg) {
         return new LuoFuShanException(msg);
     }
+
+    public static LuoFuShanException adminFail(String msg) {return new LuoFuShanException(msg);}
 }

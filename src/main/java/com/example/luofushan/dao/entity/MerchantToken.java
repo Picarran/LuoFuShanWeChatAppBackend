@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 
 @Data
 @TableName("merchant_token")
-public class MerchantToken extends BaseDO {
+public class MerchantToken {
 
     @TableId(type = IdType.AUTO)
     private Long id;
