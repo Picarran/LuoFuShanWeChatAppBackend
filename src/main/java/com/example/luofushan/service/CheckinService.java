@@ -15,4 +15,12 @@ public interface CheckinService {
     Page<UserCheckinHistoryResp> getUserHistory(UserCheckinHistoryReq req);
 
     UserCheckinResp doUserCheckin(UserCheckinReq req);
+
+    long getUserCheckinMonthCount(Long id);
+
+    long getUserCheckinWeekCount(Long id);
+
+    long getUserCheckinDayCount(Long id);
+
+    long getLocationCheckinCount(Long id);
 }

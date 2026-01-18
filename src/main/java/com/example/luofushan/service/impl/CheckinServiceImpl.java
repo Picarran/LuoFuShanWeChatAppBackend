@@ -26,9 +26,10 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static com.example.luofushan.common.constant.RedisCacheConstant.LOCATION_CHECKIN_KEY;
+import static com.example.luofushan.common.constant.RedisCacheConstant.*;
 
 @Service
 public class CheckinServiceImpl implements CheckinService {
@@ -117,11 +118,14 @@ public class CheckinServiceImpl implements CheckinService {
 //        Long todayCount = checkinLocationMapper.selectTodayCount(req.getLocationId());
         Long todayCount = getLocationCheckinCount(req.getLocationId());
 
-        // 5. 更新用户积分
+        // 5.1. 更新用户积分
         int score = loc.getScore();
         user.setPoints(user.getPoints() + score);
-        user.setWeeklyCheckinCount(user.getWeeklyCheckinCount() + 1);
+//        user.setWeeklyCheckinCount(user.getWeeklyCheckinCount() + 1);
         userMapper.updateById(user);
+
+        // 5.2. 更新用户打卡数
+        increaseUserCheckinCount(userId);
 
         // 6. 构造返回对象
         return UserCheckinResp.builder()
@@ -135,24 +139,87 @@ public class CheckinServiceImpl implements CheckinService {
     }
 
     private void increaseLocationCheckinCount(Long id) {
-        String key = LOCATION_CHECKIN_KEY + id;
-        if(!stringRedisTemplate.hasKey(key)) {
-            stringRedisTemplate.opsForValue().set(key, "1");
-        } else {
-            Long cnt = Long.parseLong(stringRedisTemplate.opsForValue().get(key));
-            cnt++;
-            stringRedisTemplate.opsForValue().set(key, String.valueOf(cnt));
+        CheckinKeyConfig config = new CheckinKeyConfig(LOCATION_CHECKIN_KEY, TimeUtil::remainSecondsToday);
+        String key = config.keyPrefix + id;
+
+        // 原子自增
+        Long count = stringRedisTemplate.opsForValue().increment(key);
+
+        // 第一次创建 key 时才设置过期时间
+        if (count != null && count == 1L) {
+            long ttl = config.ttlFunc.apply(LocalDateTime.now());
+            stringRedisTemplate.expire(key, ttl, TimeUnit.SECONDS);
         }
-        long ttl = TimeUtil.remainSecondsToday(LocalDateTime.now());
-        stringRedisTemplate.expire(key, ttl, TimeUnit.SECONDS);
     }
 
-    private long getLocationCheckinCount(Long id) {
+    private void increaseUserCheckinCount(Long userId) {
+        LocalDateTime now = LocalDateTime.now();
+
+        List<CheckinKeyConfig> configs = List.of(
+                new CheckinKeyConfig(USER_CHECKIN_DAY_KEY, TimeUtil::remainSecondsToday),
+                new CheckinKeyConfig(USER_CHECKIN_WEEK_KEY, TimeUtil::remainSecondsThisWeek),
+                new CheckinKeyConfig(USER_CHECKIN_MONTH_KEY, TimeUtil::remainSecondsThisMonth)
+        );
+
+        for (CheckinKeyConfig config : configs) {
+            String key = config.keyPrefix + userId;
+
+            // 原子自增
+            Long count = stringRedisTemplate.opsForValue().increment(key);
+
+            // 第一次创建 key 时才设置过期时间
+            if (count != null && count == 1L) {
+                long ttl = config.ttlFunc.apply(now);
+                stringRedisTemplate.expire(key, ttl, TimeUnit.SECONDS);
+            }
+        }
+    }
+
+    @Override
+    public long getLocationCheckinCount(Long id) {
         String key = LOCATION_CHECKIN_KEY + id;
         if(!stringRedisTemplate.hasKey(key)) {
             return 0;
         }
         return Long.parseLong(stringRedisTemplate.opsForValue().get(key));
+    }
+
+    @Override
+    public long getUserCheckinDayCount(Long id) {
+        String key = USER_CHECKIN_DAY_KEY + id;
+        if(!stringRedisTemplate.hasKey(key)) {
+            return 0;
+        }
+        return Long.parseLong(stringRedisTemplate.opsForValue().get(key));
+    }
+
+    @Override
+    public long getUserCheckinWeekCount(Long id) {
+        String key = USER_CHECKIN_WEEK_KEY + id;
+        if(!stringRedisTemplate.hasKey(key)) {
+            return 0;
+        }
+        return Long.parseLong(stringRedisTemplate.opsForValue().get(key));
+    }
+
+    @Override
+    public long getUserCheckinMonthCount(Long id) {
+        String key = USER_CHECKIN_MONTH_KEY + id;
+        if(!stringRedisTemplate.hasKey(key)) {
+            return 0;
+        }
+        return Long.parseLong(stringRedisTemplate.opsForValue().get(key));
+    }
+
+
+    private static class CheckinKeyConfig {
+        String keyPrefix;
+        Function<LocalDateTime, Long> ttlFunc;
+
+        CheckinKeyConfig(String keyPrefix, Function<LocalDateTime, Long> ttlFunc) {
+            this.keyPrefix = keyPrefix;
+            this.ttlFunc = ttlFunc;
+        }
     }
 
 }

@@ -23,4 +23,14 @@ public class TimeUtil {
 
         return Duration.between(now, nextWeekStart).getSeconds();
     }
+
+    public static long remainSecondsThisMonth(LocalDateTime now) {
+        LocalDateTime nextMonthStart = now
+                .toLocalDate()
+                .withDayOfMonth(1)
+                .plusMonths(1)
+                .atStartOfDay();
+
+        return Duration.between(now, nextMonthStart).getSeconds();
+    }
 }
