@@ -6,7 +6,9 @@ import org.apache.ibatis.annotations.Param;
 
 public interface CheckinLocationMapper extends BaseMapper<CheckinLocation> {
 
+    @Deprecated
     void incrementTodayCount(@Param("id") Long id);
 
+    @Deprecated
     Long selectTodayCount(@Param("id") Long id);
 }

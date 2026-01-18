@@ -16,13 +16,19 @@ import com.example.luofushan.dto.resp.UserCheckinHistoryResp;
 import com.example.luofushan.dto.resp.UserCheckinResp;
 import com.example.luofushan.security.UserContext;
 import com.example.luofushan.service.CheckinService;
+import com.example.luofushan.util.TimeUtil;
 import jakarta.annotation.Resource;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+
+import static com.example.luofushan.common.constant.RedisCacheConstant.LOCATION_CHECKIN_KEY;
 
 @Service
 public class CheckinServiceImpl implements CheckinService {
@@ -34,6 +40,9 @@ public class CheckinServiceImpl implements CheckinService {
 
     @Resource
     private UserMapper userMapper;
+
+    @Resource
+    private StringRedisTemplate stringRedisTemplate;
 
     @Override
     public List<CheckinLocationListResp> getAllLocations() {
@@ -49,7 +58,7 @@ public class CheckinServiceImpl implements CheckinService {
                 .latitude(loc.getLatitude())
                 .longitude(loc.getLongitude())
                 .score(loc.getScore())
-                .todayHasCheckin(loc.getTodayHasCheckin())
+                .todayHasCheckin(getLocationCheckinCount(loc.getId()))
                 .build()
         ).collect(Collectors.toList());
     }
@@ -101,10 +110,12 @@ public class CheckinServiceImpl implements CheckinService {
         }
 
         // 3. 景点今日打卡数 + 1
-        checkinLocationMapper.incrementTodayCount(req.getLocationId());
+//        checkinLocationMapper.incrementTodayCount(req.getLocationId());
+        increaseLocationCheckinCount(req.getLocationId());
 
         // 4. 获取更新后的今日打卡数
-        Long todayCount = checkinLocationMapper.selectTodayCount(req.getLocationId());
+//        Long todayCount = checkinLocationMapper.selectTodayCount(req.getLocationId());
+        Long todayCount = getLocationCheckinCount(req.getLocationId());
 
         // 5. 更新用户积分
         int score = loc.getScore();
@@ -122,4 +133,26 @@ public class CheckinServiceImpl implements CheckinService {
                 .todayHasCheckin(todayCount)
                 .build();
     }
+
+    private void increaseLocationCheckinCount(Long id) {
+        String key = LOCATION_CHECKIN_KEY + id;
+        if(!stringRedisTemplate.hasKey(key)) {
+            stringRedisTemplate.opsForValue().set(key, "1");
+        } else {
+            Long cnt = Long.parseLong(stringRedisTemplate.opsForValue().get(key));
+            cnt++;
+            stringRedisTemplate.opsForValue().set(key, String.valueOf(cnt));
+        }
+        long ttl = TimeUtil.remainSecondsToday(LocalDateTime.now());
+        stringRedisTemplate.expire(key, ttl, TimeUnit.SECONDS);
+    }
+
+    private long getLocationCheckinCount(Long id) {
+        String key = LOCATION_CHECKIN_KEY + id;
+        if(!stringRedisTemplate.hasKey(key)) {
+            return 0;
+        }
+        return Long.parseLong(stringRedisTemplate.opsForValue().get(key));
+    }
+
 }
