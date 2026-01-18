@@ -109,6 +109,7 @@ public class CheckinServiceImpl implements CheckinService {
         // 5. 更新用户积分
         int score = loc.getScore();
         user.setPoints(user.getPoints() + score);
+        user.setWeeklyCheckinCount(user.getWeeklyCheckinCount() + 1);
         userMapper.updateById(user);
 
         // 6. 构造返回对象
