@@ -11,6 +11,4 @@ public class AdminCreateMerchantReq {
     private String type;
 
     private Long resourceId;
-
-    private Integer status;
 }
