@@ -29,6 +29,7 @@ public class PostListResp {
     private Double longitude;
     private Double distance;
     private Integer likeCount;
+    private boolean liked;
     private Integer commentCount;
     private LocalDateTime postTime;
 }

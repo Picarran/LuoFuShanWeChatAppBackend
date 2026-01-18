@@ -57,6 +57,11 @@ public class UserPostServiceImpl implements UserPostService {
     @Override
     public Page<PostListResp> listPosts(PostListReq req) {
         req.initDefault();
+
+        Long uid = UserContext.getUserId();
+        if(uid==null) throw new LuoFuShanException("未登录");
+
+
         int offset = (req.getPage() - 1) * req.getSize();
 
         if("distance".equals(req.getSortBy()) && (req.getLatitude()==null || req.getLongitude()==null)) {
@@ -65,6 +70,12 @@ public class UserPostServiceImpl implements UserPostService {
 
         List<PostListResp> records = userPostMapper.selectPosts(req.getFuzzy(), req.getLatitude(), req.getLongitude(), offset, req.getSize(), req.getSortBy());
         int total = userPostMapper.countPosts(req.getFuzzy());
+
+        records.forEach(post -> {
+            String key = POST_LIKE_KEY + uid + "+" + post.getId();
+            boolean liked = stringRedisTemplate.hasKey(key);
+            post.setLiked(liked);
+        });
 
         Page<PostListResp> page = new Page<>(req.getPage(),req.getSize(),total);
         page.setTotal(total);
