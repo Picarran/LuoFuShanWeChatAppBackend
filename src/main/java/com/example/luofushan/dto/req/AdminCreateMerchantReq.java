@@ -10,5 +10,9 @@ public class AdminCreateMerchantReq {
     private String name;
     private String type;
 
+    private String contactName;
+    private String contactPhone;
+    private String address;
+
     private Long resourceId;
 }

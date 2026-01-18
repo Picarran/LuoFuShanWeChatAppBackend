@@ -20,5 +20,6 @@ public class AdminMerchantDetailResp {
 
     private String contactName;
     private String contactPhone;
+    private String address;
     private String resourceName;
 }
