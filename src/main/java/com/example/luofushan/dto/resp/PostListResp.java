@@ -16,6 +16,8 @@ public class PostListResp {
     private Long id;
 
     private Long userId;
+    private String nickname;
+    private String avatarUrl;
 
     private String content;
 

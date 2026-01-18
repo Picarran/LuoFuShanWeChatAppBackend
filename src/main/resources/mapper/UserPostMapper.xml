@@ -9,6 +9,8 @@
         SELECT
         up.id,
         up.user_id AS userId,
+        user.nickname,
+        user.avatar_url AS avatarUrl,
         up.content AS content,
         cl.id AS locationId,
         cl.name AS locationName,
@@ -28,6 +30,7 @@
         up.created_at AS postTime
         FROM user_post up
         LEFT JOIN checkin_location cl ON up.location_id = cl.id
+        LEFT JOIN user ON user.id = up.user_id
         WHERE up.delflag = 0
         <if test="fuzzy != null and fuzzy != ''">
             AND up.content LIKE CONCAT('%', #{fuzzy}, '%')
