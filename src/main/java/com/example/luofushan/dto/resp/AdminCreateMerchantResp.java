@@ -8,12 +8,16 @@ import lombok.Data;
 public class AdminCreateMerchantResp {
     private Long id;
 
-    private String username;
+    private Long resourceId;
 
     private String name;
     private String type;
 
-    private Long resourceId;
+    private String username;
+
+    private String contactName;
+    private String contactPhone;
+    private String address;
 
     private Integer status;
 }

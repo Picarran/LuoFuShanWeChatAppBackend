@@ -9,5 +9,6 @@ public class AdminUpdateMerchantReq {
     private String name;
     private String contactName;
     private String contactPhone;
+    private String address;
     private Integer status;
 }
