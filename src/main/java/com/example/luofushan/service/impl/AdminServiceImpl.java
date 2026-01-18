@@ -11,6 +11,7 @@ import com.example.luofushan.dto.resp.*;
 import com.example.luofushan.service.AdminService;
 import io.netty.util.internal.StringUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 import org.springframework.util.StringUtils;
@@ -213,7 +214,12 @@ public class AdminServiceImpl implements AdminService {
         req.setPassword(DigestUtils.md5DigestAsHex(req.getPassword().getBytes(StandardCharsets.UTF_8)));
         Merchant merchant = BeanUtil.toBean(req, Merchant.class);
         merchant.setStatus(1);
-        merchantMapper.insert(merchant);
+        try {
+            merchantMapper.insert(merchant);
+        }catch (DuplicateKeyException e) {
+            e.printStackTrace();
+            throw LuoFuShanException.adminFail("该资源已被其他商家绑定");
+        }
         return BeanUtil.toBean(merchant, AdminCreateMerchantResp.class);
     }
 
@@ -260,8 +266,9 @@ public class AdminServiceImpl implements AdminService {
         Merchant merchant = merchantMapper.selectOne(wrapper);
         if(merchant==null) throw LuoFuShanException.adminFail("商家不存在");
 
-//        if(req.getContactName()!=null) merchant.setContcatName()
-//        if(req.getContactPhone()!=null) merchant.setContactPhone()
+        if(req.getContactName()!=null) merchant.setContactName(req.getContactName());
+        if(req.getContactPhone()!=null) merchant.setContactPhone(req.getContactPhone());
+        if(req.getAddress()!=null) merchant.setAddress(req.getAddress());
         if(req.getStatus()!=null) {
             if(req.getStatus()!=0 && req.getStatus()!=1) {
                 throw LuoFuShanException.adminFail("启用状态只能为0或1");
