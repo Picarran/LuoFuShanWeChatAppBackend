@@ -1,5 +1,7 @@
 package com.example.luofushan.config;
 
+import com.example.luofushan.security.AdminFilter;
+import com.example.luofushan.security.MerchantTokenFilter;
 import com.example.luofushan.security.TokenFilter;
 import jakarta.servlet.Filter;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
@@ -40,6 +42,30 @@ public class WebConfig implements WebMvcConfigurer {
             "/common/upload"
         );
         reg.setOrder(1);
+        return reg;
+    }
+
+    @Bean
+    public FilterRegistrationBean<Filter> merchantTokenFilterRegistration(MerchantTokenFilter merchantTokenFilter) {
+        FilterRegistrationBean<Filter> reg = new FilterRegistrationBean<>();
+        reg.setFilter(merchantTokenFilter);
+//        reg.addUrlPatterns("/*");
+        reg.addUrlPatterns(
+                "/merchant/*"
+        );
+        reg.setOrder(10);
+        return reg;
+    }
+
+    @Bean
+    public FilterRegistrationBean<Filter> adminTokenFilterRegistration(AdminFilter adminFilter) {
+        FilterRegistrationBean<Filter> reg = new FilterRegistrationBean<>();
+        reg.setFilter(adminFilter);
+//        reg.addUrlPatterns("/*");
+        reg.addUrlPatterns(
+                "/admin/*"
+        );
+        reg.setOrder(100);
         return reg;
     }
 }
