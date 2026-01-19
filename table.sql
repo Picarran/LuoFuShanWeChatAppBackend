@@ -145,7 +145,7 @@ CREATE TABLE post_comment (
 -- =====================================
 CREATE TABLE merchant (
     id BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT '商家ID',
-    resource_id BIGINT NOT NULL COMMENT '关联的商家资源ID',
+    resource_id BIGINT NULL COMMENT '关联的商家资源ID',
     name VARCHAR(64) NOT NULL COMMENT '商家名称',
     type ENUM('景点','住宿','餐饮','商家') NOT NULL COMMENT '商家类型',
     username VARCHAR(64) NOT NULL COMMENT '登录账号',

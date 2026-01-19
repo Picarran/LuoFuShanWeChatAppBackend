@@ -14,6 +14,8 @@ public interface AdminService {
 
     String deleteResource(Long id);
 
+    AdminSaveResourceResp getResourceDetail(Long id);
+
     AdminSaveCheckinLocationResp saveCheckinLocation(AdminSaveCheckinLocationReq req);
 
     String deleteCheckinLocation(Long id);
