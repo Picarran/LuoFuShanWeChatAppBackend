@@ -153,6 +153,18 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
+    public AdminSaveResourceResp getResourceDetail(Long id) {
+        LambdaQueryWrapper<Resource> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(Resource::getDelflag, 0)
+               .eq(Resource::getId, id);
+        Resource resource = resourceMapper.selectOne(wrapper);
+        if (resource == null) {
+            throw LuoFuShanException.resourceNotExists();
+        }
+        return BeanUtil.toBean(resource, AdminSaveResourceResp.class);
+    }
+
+    @Override
     public AdminSaveCheckinLocationResp saveCheckinLocation(AdminSaveCheckinLocationReq req) {
         CheckinLocation checkinLocation;
         // 插入

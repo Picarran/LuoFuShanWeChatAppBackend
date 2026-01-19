@@ -44,6 +44,11 @@ public class AdminController {
         return Result.buildSuccess(adminService.deleteResource(id));
     }
 
+    @GetMapping("/resource/detail")
+    public Result<AdminSaveResourceResp> getResourceDetail(@RequestParam Long id) {
+        return Result.buildSuccess(adminService.getResourceDetail(id));
+    }
+
     @GetMapping("/resource/list")
     public Result<Page<ResourcePageResp>> list(ResourcePageReq req) {
         Page<ResourcePageResp> result = resourceService.queryPage(req);
