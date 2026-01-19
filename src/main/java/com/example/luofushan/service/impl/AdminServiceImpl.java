@@ -323,6 +323,7 @@ public class AdminServiceImpl implements AdminService {
             throw LuoFuShanException.adminFail("商家不存在");
         }
         merchant.setDelflag(1);
+        merchant.setResourceId(null);
         merchantMapper.updateById(merchant);
         return "删除成功";
     }
