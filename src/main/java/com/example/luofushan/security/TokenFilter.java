@@ -31,6 +31,7 @@ public class TokenFilter implements Filter {
             "/mall/item/list", 
             "/admin",
             "/merchant",  
+            "/common",
             "/v3/api-docs", "/swagger", "/swagger-ui", "/favicon", "/error" 
     );
 
