@@ -74,7 +74,7 @@ CREATE TABLE checkin_location (
     latitude DOUBLE NULL COMMENT '纬度',
     longitude DOUBLE NULL COMMENT '经度',
     score INT NOT NULL COMMENT '单次打卡奖励积分',
-    today_has_checkin BIGINT NOT NULL COMMENT '今日总打卡数',
+    today_has_checkin BIGINT NULL COMMENT '今日总打卡数',
     cover_img VARCHAR(255) NULL COMMENT '封面图',
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',

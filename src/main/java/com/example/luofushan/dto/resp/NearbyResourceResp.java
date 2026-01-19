@@ -9,6 +9,8 @@ public class NearbyResourceResp {
     private Long id;
     private String title;
     private Double distance; // 米
+    private Double latitude;
+    private Double longitude;
     private Integer hotScore;
     private String coverImg;
     private LocalDateTime createdAt;

@@ -55,6 +55,8 @@
         SELECT
         r.id,
         r.name AS title,
+        r.longitude,
+        r.latitude,
         IF(
         #{latitude} IS NOT NULL AND #{longitude} IS NOT NULL,
         ST_Distance_Sphere(
@@ -99,6 +101,8 @@
         r.hot_score AS hotScore,
         r.created_at AS createdAt,
         r.content_json AS content,
+        r.longitude,
+        r.latitude,
         IF(#{userLat} IS NOT NULL AND #{userLng} IS NOT NULL,
         ST_Distance_Sphere(POINT(r.longitude, r.latitude), POINT(#{userLng}, #{userLat})),
         NULL
