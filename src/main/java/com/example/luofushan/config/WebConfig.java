@@ -38,8 +38,7 @@ public class WebConfig implements WebMvcConfigurer {
             "/checkin/*",
             "/user/*",
             "/exchange/*", 
-            "/mall/item/exchange", 
-            "/common/upload"
+            "/mall/item/exchange"
         );
         reg.setOrder(1);
         return reg;
